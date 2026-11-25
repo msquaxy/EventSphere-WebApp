@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # EventSphere Mobile
 
 React Native (Expo) app for the EventSphere web app. It uses the **same Firebase project** as the
