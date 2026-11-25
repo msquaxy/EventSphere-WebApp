@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "EventSphere",
+    "slug": "eventsphere-mobile",
+    "scheme": "eventsphere",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#fbfcf8",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eventsphere.mobile"
+    },
+    "android": {
+      "package": "com.eventsphere.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#173f35",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-web-browser",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#173f35"
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "EventSphere uses the camera to scan guest tickets at check-in."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "EventSphere uses your location to find events near you."
+        }
+      ]
+    ]
+  }
+}
