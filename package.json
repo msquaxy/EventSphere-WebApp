@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "eventsphere-mobile",
   "version": "1.0.0",
   "main": "expo-router/entry",
@@ -40,4 +41,29 @@
     "bundle": "expo export --platform android"
   },
   "private": true
+=======
+  "name": "eventsphere",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "emulators": "firebase emulators:start --only auth,firestore,functions",
+    "seed": "node scripts/seed.mjs",
+    "seed:emulator": "node scripts/seed.mjs --emulator",
+    "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes",
+    "deploy:functions": "firebase deploy --only functions"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.6.0"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.3",
+    "firebase-tools": "^15.37.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+>>>>>>> 361a340ab6677dcc25996924bcab7b8dae6008b4
 }

@@ -1,0 +1,93 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function profile(uid) {
+      return get(/databases/$(database)/documents/users/$(uid)).data;
+    }
+    function signedIn() {
+      return request.auth != null;
+    }
+    function activeUser() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && profile(request.auth.uid).status == 'active';
+    }
+    function isAdmin() {
+      return activeUser() && profile(request.auth.uid).role == 'admin';
+    }
+    function isOrganizer() {
+      return activeUser() && profile(request.auth.uid).role in ['organizer', 'admin'];
+    }
+    function ownsEvent(eventId) {
+      return activeUser() && profile(request.auth.uid).role in ['organizer', 'admin'] && get(/databases/$(database)/documents/events/$(eventId)).data.organizerId == request.auth.uid;
+    }
+
+    match /users/{uid} {
+      allow read: if (signedIn() && (request.auth.uid == uid || isAdmin()));
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['fullName', 'email', 'role', 'status', 'city', 'phone', 'createdAt', 'updatedAt'])
+        && request.resource.data.fullName is string
+        && request.resource.data.fullName.size() >= 2
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role in ['attendee', 'organizer']
+        && request.resource.data.status == 'active';
+      allow update: if isAdmin()
+        || (request.auth.uid == uid
+          && activeUser()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName', 'city', 'phone', 'updatedAt'])
+          && request.resource.data.fullName is string
+          && request.resource.data.fullName.size() >= 2);
+      allow delete: if isAdmin();
+    }
+
+    match /events/{eventId} {
+      allow read: if resource.data.status in ['published', 'cancelled']
+        || (activeUser() && resource.data.organizerId == request.auth.uid)
+        || isAdmin();
+      allow create: if isOrganizer()
+        && request.resource.data.organizerId == request.auth.uid
+        && request.resource.data.status in ['draft', 'published']
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.capacity is int
+        && request.resource.data.capacity > 0
+        && request.resource.data.priceCentavos is int
+        && request.resource.data.priceCentavos >= 0
+        && request.resource.data.soldCount == 0
+        && request.resource.data.reservedCount == 0;
+      allow update: if (isAdmin() || (activeUser() && resource.data.organizerId == request.auth.uid && profile(request.auth.uid).role == 'organizer'))
+        && request.resource.data.organizerId == resource.data.organizerId
+        && request.resource.data.capacity >= resource.data.soldCount + resource.data.reservedCount
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['soldCount', 'reservedCount']);
+      allow delete: if isAdmin() || (activeUser() && resource.data.organizerId == request.auth.uid && resource.data.status == 'draft');
+    }
+
+    match /orders/{orderId} {
+      allow read: if isAdmin()
+        || (activeUser() && resource.data.attendeeId == request.auth.uid)
+        || ownsEvent(resource.data.eventId);
+      allow create: if activeUser()
+        && request.resource.data.attendeeId == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.paymentProvider == 'paymongo'
+        && request.resource.data.quantity is int
+        && request.resource.data.quantity >= 1
+        && request.resource.data.quantity <= 6
+        && request.resource.data.totalCentavos == get(/databases/$(database)/documents/events/$(request.resource.data.eventId)).data.priceCentavos * request.resource.data.quantity;
+      allow update, delete: if isAdmin();
+    }
+
+    match /tickets/{ticketId} {
+      allow read: if isAdmin()
+        || (activeUser() && resource.data.attendeeId == request.auth.uid)
+        || ownsEvent(resource.data.eventId);
+      allow write: if isAdmin();
+    }
+
+    match /savedEvents/{savedId} {
+      allow read: if activeUser() && resource.data.userId == request.auth.uid;
+      allow create: if activeUser() && request.resource.data.userId == request.auth.uid;
+      allow delete: if activeUser() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

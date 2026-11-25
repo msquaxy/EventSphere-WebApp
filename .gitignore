@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 # dependencies
@@ -43,3 +44,16 @@ yarn-error.*
 # env
 .env
 .env.local
+=======
+node_modules/
+dist/
+.env
+.env.local
+frontend/.env.local
+frontend/dist/
+functions/node_modules/
+functions/.env
+.firebase/
+*-debug.log
+.DS_Store
+>>>>>>> 361a340ab6677dcc25996924bcab7b8dae6008b4
