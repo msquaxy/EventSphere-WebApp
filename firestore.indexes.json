@@ -1,0 +1,11 @@
+{
+  "indexes": [
+    { "collectionGroup": "events", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "startAt", "order": "ASCENDING" }] },
+    { "collectionGroup": "events", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "organizerId", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "orders", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "attendeeId", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "orders", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "eventId", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "orders", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "expiresAt", "order": "ASCENDING" }] },
+    { "collectionGroup": "tickets", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "code", "order": "ASCENDING" }] }
+  ],
+  "fieldOverrides": []
+}
