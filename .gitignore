@@ -9,3 +9,5 @@ functions/.env
 .firebase/
 *-debug.log
 .DS_Store
+.expo/
+web-build/
